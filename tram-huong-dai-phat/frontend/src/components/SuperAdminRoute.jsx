@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 
-// Cho phép cả 'admin' lẫn 'super_admin' truy cập trang quản trị
-function AdminRoute({ children }) {
+// Chỉ cho phép 'super_admin' truy cập
+function SuperAdminRoute({ children }) {
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -9,11 +9,11 @@ function AdminRoute({ children }) {
     return <Navigate to="/login" replace />;
   }
 
-  if (user?.role !== "admin" && user?.role !== "super_admin") {
+  if (user?.role !== "super_admin") {
     return <Navigate to="/" replace />;
   }
 
   return children;
 }
 
-export default AdminRoute;
+export default SuperAdminRoute;

@@ -3,16 +3,25 @@ import { Link } from "react-router-dom";
 import api from "../services/api";
 import Header from "../components/Header";
 import ProductCard from "../components/ProductCard";
+import HeroSlideshow from "../components/HeroSlideshow";
+
+const STATS = [
+  { number: "10+",  label: "Năm kinh nghiệm" },
+  { number: "500+", label: "Khách hàng tin dùng" },
+  { number: "50+",  label: "Loại sản phẩm" },
+  { number: "100%", label: "Nguồn gốc tự nhiên" },
+];
 
 function HomePage() {
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [search, setSearch] = useState("");
+  const [products, setProducts]         = useState([]);
+  const [categories, setCategories]     = useState([]);
+  const [search, setSearch]             = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
   const fetchCategories = async () => {
     try {
-      const res = await api.get("/categories");
+      // ?t= để tránh browser cache trả 304
+      const res = await api.get(`/categories?t=${Date.now()}`);
       setCategories(res.data?.data || []);
     } catch (error) {
       console.error("Lỗi lấy danh mục:", error);
@@ -22,48 +31,24 @@ function HomePage() {
   const fetchProducts = async () => {
     try {
       const params = {};
-
-      if (search.trim()) {
-        params.search = search.trim();
-      }
-
-      if (selectedCategory) {
-        params.category_id = selectedCategory;
-      }
-
+      if (search.trim()) params.search = search.trim();
+      if (selectedCategory) params.category_id = selectedCategory;
       const res = await api.get("/products", { params });
       const rawProducts = res.data?.data || [];
-
-      // Chỉ ẩn sản phẩm có status = hidden
-      const visibleProducts = rawProducts.filter(
-        (product) => product.status !== "hidden"
-      );
-
-      setProducts(visibleProducts);
+      setProducts(rawProducts.filter((p) => p.status !== "hidden"));
     } catch (error) {
       console.error("Lỗi lấy sản phẩm:", error);
     }
   };
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  useEffect(() => {
-    fetchProducts();
-  }, [search, selectedCategory]);
+  useEffect(() => { fetchCategories(); }, []);
+  useEffect(() => { fetchProducts(); }, [search, selectedCategory]);
 
   const featuredCategories = categories.slice(0, 3);
 
-  // Ưu tiên sản phẩm active trước, sau đó mới tới out_of_stock
   const sortedProducts = useMemo(() => {
     return [...products].sort((a, b) => {
-      const order = {
-        active: 1,
-        out_of_stock: 2,
-        hidden: 3,
-      };
-
+      const order = { active: 1, out_of_stock: 2, hidden: 3 };
       return (order[a.status] || 99) - (order[b.status] || 99);
     });
   }, [products]);
@@ -71,56 +56,12 @@ function HomePage() {
   return (
     <>
       <Header />
-
       <main id="home">
-        <section className="hero-section">
-          <div className="hero-left">
-            <div className="hero-overlay">
-              <div className="hero-content">
-                <p className="hero-subtitle">Trầm Hương Đại Phát</p>
-                <h1>
-                  TINH HOA THIÊN NHIÊN,
-                  <br />
-                  KHỞI ĐẦU BÌNH AN.
-                </h1>
-                <p className="hero-desc">
-                  Khám phá bộ sưu tập vòng tay, nhang trầm và quà tặng trầm hương
-                  theo phong cách sang trọng, tinh tế và gần gũi thiên nhiên.
-                </p>
 
-                <div className="hero-buttons">
-                  <a href="#products" className="gold-btn large-btn">
-                    Mua ngay
-                  </a>
-                  <a href="#categories" className="outline-light-btn large-btn">
-                    Xem danh mục
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
+        {/* ── Hero Slideshow ── */}
+        <HeroSlideshow />
 
-          <div className="hero-right">
-            <div className="side-block">
-              <h3 className="side-title">Danh mục nổi bật</h3>
-              <div className="mini-category-grid">
-                {featuredCategories.map((category, index) => (
-                  <div className="mini-category-card" key={category.id}>
-                    <img
-                      src={`https://picsum.photos/400/300?random=${index + 11}`}
-                      alt={category.name}
-                    />
-                    <div className="mini-category-content">
-                      <h4>{category.name}</h4>
-                      <p>{category.description || "Sản phẩm trầm hương cao cấp"}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
+        {/* ── Danh mục nổi bật ── */}
         <section id="categories" className="premium-section">
           <div className="container">
             <div className="section-heading">
@@ -129,22 +70,41 @@ function HomePage() {
             </div>
 
             <div className="featured-category-row">
-              {featuredCategories.map((category, index) => (
-                <div className="featured-category-large" key={category.id}>
-                  <img
-                    src={`https://picsum.photos/700/500?random=${index + 31}`}
-                    alt={category.name}
-                  />
-                  <div className="featured-category-overlay">
-                    <h3>{category.name}</h3>
-                    <p>{category.description || "Tinh tế, sang trọng, tự nhiên"}</p>
+              {featuredCategories.length === 0 ? (
+                <p style={{ color: "#9a8a7a" }}>Chưa có danh mục nào.</p>
+              ) : (
+                featuredCategories.map((category) => (
+                  <div className="featured-category-large" key={category.id}>
+                    {category.image_url ? (
+                      <img
+                        src={category.image_url}
+                        alt={category.name}
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                          e.target.parentNode.style.background =
+                            "linear-gradient(135deg,#4a3520,#7b5b28)";
+                        }}
+                      />
+                    ) : (
+                      <div style={{
+                        position: "absolute", inset: 0,
+                        background: "linear-gradient(135deg,#2d1f16 0%,#4a3520 50%,#7b5b28 100%)",
+                        display: "flex", alignItems: "center",
+                        justifyContent: "center", fontSize: 72,
+                      }}>🌿</div>
+                    )}
+                    <div className="featured-category-overlay">
+                      <h3>{category.name}</h3>
+                      <p>{category.description || "Tinh tế, sang trọng, tự nhiên"}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </section>
 
+        {/* ── Sản phẩm ── */}
         <section id="products" className="premium-section product-showcase">
           <div className="container">
             <div className="section-heading">
@@ -160,17 +120,14 @@ function HomePage() {
                 onChange={(e) => setSearch(e.target.value)}
                 className="search-input"
               />
-
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="category-select"
               >
                 <option value="">Tất cả danh mục</option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
               </select>
             </div>
@@ -186,68 +143,132 @@ function HomePage() {
             </div>
 
             <div className="center-box">
-              <Link to="/cart" className="gold-btn large-btn">
-                Xem giỏ hàng
-              </Link>
+              <Link to="/cart" className="gold-btn large-btn">Xem giỏ hàng</Link>
             </div>
           </div>
         </section>
 
+        {/* ── Về thương hiệu ── */}
         <section id="about" className="premium-section about-section">
-          <div className="container about-grid">
-            <div className="about-image-box">
-              <img
-                src="https://picsum.photos/700/500?random=90"
-                alt="Trầm hương cao cấp"
-              />
+          <div className="container">
+
+            {/* Thống kê số liệu */}
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(4, 1fr)",
+              gap: 16,
+              marginBottom: 56,
+            }}>
+              {STATS.map((stat) => (
+                <div key={stat.label} style={{
+                  background: "#fff",
+                  border: "1px solid #eadfce",
+                  borderRadius: 20,
+                  padding: "28px 16px",
+                  textAlign: "center",
+                  boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
+                }}>
+                  <p style={{
+                    fontSize: 36,
+                    fontWeight: 800,
+                    color: "#c89b3c",
+                    margin: "0 0 6px",
+                    lineHeight: 1,
+                  }}>{stat.number}</p>
+                  <p style={{ margin: 0, color: "#7a6b5f", fontSize: 14 }}>
+                    {stat.label}
+                  </p>
+                </div>
+              ))}
             </div>
 
-            <div className="about-content">
-              <p className="section-tag">Về thương hiệu</p>
-              <h2>Giá trị đến từ sự tinh tuyển và an yên</h2>
-              <p>
-                Trầm Hương Đại Phát hướng đến các sản phẩm mang giá trị sử dụng thực
-                tế, tính thẩm mỹ cao và cảm giác thư thái cho không gian sống.
-              </p>
-              <p>
-                Từ vòng tay trầm, nhang trầm cho đến quà tặng, mỗi sản phẩm đều được
-                chọn lọc theo tinh thần mộc mạc, sang trọng và phù hợp để sử dụng
-                hoặc biếu tặng.
-              </p>
+            {/* Nội dung chính */}
+            <div className="about-grid">
 
-              <div className="about-points">
-                <div className="about-point">✓ Thiết kế sang trọng, tinh tế</div>
-                <div className="about-point">✓ Phù hợp quà tặng và phong thủy</div>
-                <div className="about-point">✓ Dễ sử dụng trong đời sống hằng ngày</div>
+              {/* Bên trái: ảnh thật — đổi tên ảnh thành about-image.jpg
+                  rồi copy vào thư mục backend/uploads/ là hiện lên */}
+              <div className="about-image-box">
+                <img
+                  src="http://localhost:5000/uploads/about-image.jpg"
+                  alt="Vườn Trầm Hương Đại Phát"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                    e.target.nextElementSibling.style.display = "flex";
+                  }}
+                />
+                {/* Placeholder — tự ẩn khi có ảnh thật */}
+                <div style={{
+                  display: "none",
+                  width: "100%",
+                  height: 480,
+                  borderRadius: 24,
+                  background: "linear-gradient(135deg,#2d1f16 0%,#4a3520 40%,#7b5b28 70%,#c89b3c 100%)",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                  gap: 20,
+                  boxShadow: "0 14px 28px rgba(0,0,0,0.15)",
+                }}>
+                  <span style={{ fontSize: 72 }}>🌿</span>
+                  <div style={{ textAlign: "center", padding: "0 32px" }}>
+                    <p style={{
+                      color: "#fff",
+                      fontSize: 18,
+                      fontWeight: 700,
+                      margin: "0 0 8px",
+                    }}>Vườn Trầm Hương Đại Phát</p>
+                    <p style={{
+                      color: "rgba(255,255,255,0.65)",
+                      fontSize: 13,
+                      margin: 0,
+                      lineHeight: 1.6,
+                    }}>
+                      Đổi tên ảnh thành <strong style={{ color: "#f0d898" }}>about-image.jpg</strong><br />
+                      và copy vào thư mục <strong style={{ color: "#f0d898" }}>backend/uploads/</strong>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bên phải: nội dung */}
+              <div className="about-content">
+                <p className="section-tag">Về thương hiệu</p>
+                <h2>Giá trị đến từ sự tinh tuyển và an yên</h2>
+                <p>
+                  Trầm Hương Đại Phát hướng đến các sản phẩm mang giá trị sử dụng
+                  thực tế, tính thẩm mỹ cao và cảm giác thư thái cho không gian sống.
+                </p>
+                <p>
+                  Từ vòng tay trầm, nhang trầm cho đến quà tặng, mỗi sản phẩm đều
+                  được chọn lọc theo tinh thần mộc mạc, sang trọng và phù hợp để
+                  sử dụng hoặc biếu tặng.
+                </p>
+                <div className="about-points">
+                  <div className="about-point">✓ Thiết kế sang trọng, tinh tế</div>
+                  <div className="about-point">✓ Phù hợp quà tặng và phong thủy</div>
+                  <div className="about-point">✓ Dễ sử dụng trong đời sống hằng ngày</div>
+                  <div className="about-point">✓ Nguồn gốc tự nhiên, an toàn sức khỏe</div>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
+        {/* ── Footer ── */}
         <footer id="contact" className="site-footer">
           <div className="container footer-grid">
             <div>
               <h3>Trầm Hương Đại Phát</h3>
-              <p>
-                Website bán các sản phẩm trầm hương theo phong cách hiện đại và cao cấp.
-              </p>
+              <p>Website bán các sản phẩm trầm hương theo phong cách hiện đại và cao cấp.</p>
             </div>
-
             <div>
               <h4>Liên kết nhanh</h4>
               <ul>
-                <li>
-                  <a href="#home">Trang chủ</a>
-                </li>
-                <li>
-                  <a href="#categories">Danh mục</a>
-                </li>
-                <li>
-                  <a href="#products">Sản phẩm</a>
-                </li>
+                <li><a href="#home">Trang chủ</a></li>
+                <li><a href="#categories">Danh mục</a></li>
+                <li><a href="#products">Sản phẩm</a></li>
               </ul>
             </div>
-
             <div>
               <h4>Liên hệ</h4>
               <p>Email: qs26k5@gmail.com</p>
@@ -255,11 +276,11 @@ function HomePage() {
               <p>Địa chỉ: Việt Nam</p>
             </div>
           </div>
-
           <div className="footer-bottom">
             © 2026 Trầm Hương Đại Phát. All rights reserved.
           </div>
         </footer>
+
       </main>
     </>
   );

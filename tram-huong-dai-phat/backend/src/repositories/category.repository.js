@@ -1,44 +1,40 @@
 const pool = require("../config/db");
 
 const getAllCategories = async () => {
-  const query = `
-    SELECT id, name, description, created_at
-    FROM categories
-    ORDER BY id DESC
-  `;
-  const result = await pool.query(query);
+  const result = await pool.query(
+    `SELECT id, name, description, image_url, created_at
+     FROM categories
+     ORDER BY id ASC`
+  );
   return result.rows;
 };
 
-const createCategory = async ({ name, description }) => {
-  const query = `
-    INSERT INTO categories (name, description)
-    VALUES ($1, $2)
-    RETURNING *
-  `;
-  const result = await pool.query(query, [name, description || null]);
+const createCategory = async ({ name, description, image_url }) => {
+  const result = await pool.query(
+    `INSERT INTO categories (name, description, image_url)
+     VALUES ($1, $2, $3)
+     RETURNING *`,
+    [name, description || null, image_url || null]
+  );
   return result.rows[0];
 };
 
-const updateCategory = async (id, { name, description }) => {
-  const query = `
-    UPDATE categories
-    SET name = $1,
-        description = $2
-    WHERE id = $3
-    RETURNING *
-  `;
-  const result = await pool.query(query, [name, description || null, id]);
+const updateCategory = async (id, { name, description, image_url }) => {
+  const result = await pool.query(
+    `UPDATE categories
+     SET name = $1, description = $2, image_url = $3
+     WHERE id = $4
+     RETURNING *`,
+    [name, description || null, image_url || null, id]
+  );
   return result.rows[0];
 };
 
 const deleteCategory = async (id) => {
-  const query = `
-    DELETE FROM categories
-    WHERE id = $1
-    RETURNING *
-  `;
-  const result = await pool.query(query, [id]);
+  const result = await pool.query(
+    `DELETE FROM categories WHERE id = $1 RETURNING *`,
+    [id]
+  );
   return result.rows[0];
 };
 

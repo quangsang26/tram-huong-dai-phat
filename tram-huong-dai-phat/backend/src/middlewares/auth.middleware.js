@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 
+// ── Xác thực token JWT ─────────────────────────────────────
 const verifyToken = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
@@ -18,9 +19,24 @@ const verifyToken = (req, res, next) => {
   }
 };
 
+// ── Yêu cầu quyền Admin hoặc Super Admin ─────────────────────
+// Super Admin được phép làm mọi thứ Admin làm
 const requireAdmin = (req, res, next) => {
-  if (req.user?.role !== "admin") {
+  const role = req.user?.role;
+
+  if (role !== "admin" && role !== "super_admin") {
     return res.status(403).json({ message: "Bạn không có quyền admin" });
+  }
+
+  next();
+};
+
+// ── Yêu cầu quyền Super Admin (chỉ super_admin) ──────────────
+const requireSuperAdmin = (req, res, next) => {
+  if (req.user?.role !== "super_admin") {
+    return res
+      .status(403)
+      .json({ message: "Bạn không có quyền Super Admin" });
   }
 
   next();
@@ -29,4 +45,5 @@ const requireAdmin = (req, res, next) => {
 module.exports = {
   verifyToken,
   requireAdmin,
+  requireSuperAdmin,
 };

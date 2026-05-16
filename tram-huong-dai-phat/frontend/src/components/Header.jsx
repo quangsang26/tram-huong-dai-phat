@@ -63,6 +63,9 @@ function Header() {
     return cartCount;
   }, [cartCount]);
 
+  const isAdmin = user?.role === "admin" || user?.role === "super_admin";
+  const isSuperAdmin = user?.role === "super_admin";
+
   return (
     <header className="site-header">
       <div className="container header-inner">
@@ -116,37 +119,53 @@ function Header() {
                     Đơn hàng của tôi
                   </Link>
 
-                  {user?.role === "admin" && (
+                  {/* ── Menu Admin (admin + super_admin) ── */}
+                  {isAdmin && (
                     <>
-                      <Link
-                        to="/admin/dashboard"
-                        onClick={() => setShowUserMenu(false)}
-                      >
+                      <hr style={{ border: "none", borderTop: "1px solid #f0e8d8", margin: "6px 0" }} />
+                      <small style={{ padding: "0 16px", color: "#b8956a", fontSize: "11px", fontWeight: 700, letterSpacing: "0.5px" }}>
+                        QUẢN TRỊ
+                      </small>
+                      <Link to="/admin/dashboard" onClick={() => setShowUserMenu(false)}>
                         Dashboard
                       </Link>
-                      <Link
-                        to="/admin/products"
-                        onClick={() => setShowUserMenu(false)}
-                      >
+                      <Link to="/admin/products" onClick={() => setShowUserMenu(false)}>
                         Quản lý sản phẩm
                       </Link>
-                      <Link
-                        to="/admin/orders"
-                        onClick={() => setShowUserMenu(false)}
-                      >
+                      <Link to="/admin/orders" onClick={() => setShowUserMenu(false)}>
                         Quản lý đơn hàng
                       </Link>
-                      <Link
-                        to="/admin/categories"
-                        onClick={() => setShowUserMenu(false)}
-                      >
+                      <Link to="/admin/categories" onClick={() => setShowUserMenu(false)}>
                         Quản lý danh mục
                       </Link>
-                      <Link
-                        to="/admin/users"
-                        onClick={() => setShowUserMenu(false)}
-                      >
+                      <Link to="/admin/users" onClick={() => setShowUserMenu(false)}>
                         Quản lý khách hàng
+                      </Link>
+                      <Link to="/admin/banners" onClick={() => setShowUserMenu(false)}>
+                        Quản lý banner
+                      </Link>
+
+                    </>
+                  )}
+
+                  {/* ── Menu Super Admin (chỉ super_admin) ── */}
+                  {isSuperAdmin && (
+                    <>
+                      <hr style={{ border: "none", borderTop: "1px solid #f0e8d8", margin: "6px 0" }} />
+                      <small style={{ padding: "0 16px", color: "#7c3aed", fontSize: "11px", fontWeight: 700, letterSpacing: "0.5px" }}>
+                        🛡️ SUPER ADMIN
+                      </small>
+                      <Link to="/super-admin/admins" onClick={() => setShowUserMenu(false)}
+                        style={{ color: "#6d28d9" }}>
+                        Quản lý Admin
+                      </Link>
+                      <Link to="/super-admin/logs" onClick={() => setShowUserMenu(false)}
+                        style={{ color: "#6d28d9" }}>
+                        Lịch sử thao tác
+                      </Link>
+                      <Link to="/super-admin/stock" onClick={() => setShowUserMenu(false)}
+                        style={{ color: "#6d28d9" }}>
+                        Báo cáo tồn kho
                       </Link>
                     </>
                   )}

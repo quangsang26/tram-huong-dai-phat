@@ -4,19 +4,15 @@ import Header from "../components/Header";
 import api from "../services/api";
 
 function OrdersPage() {
-  const user = JSON.parse(localStorage.getItem("user"));
   const [orders, setOrders] = useState([]);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
     const fetchOrders = async () => {
-      if (!user?.id) {
-        setMessage("Bạn cần đăng nhập để xem đơn hàng");
-        return;
-      }
-
       try {
-        const res = await api.get(`/orders/user/${user.id}`);
+        // 🔒 FIX IDOR: Dùng /orders/mine — backend tự lấy user_id từ JWT token
+        //    Không còn truyền user.id lên URL nữa (ai cũng đổi được)
+        const res = await api.get("/orders/mine");
         setOrders(res.data.data || []);
       } catch (error) {
         setMessage(error.response?.data?.message || "Không thể tải đơn hàng");
@@ -24,7 +20,7 @@ function OrdersPage() {
     };
 
     fetchOrders();
-  }, [user?.id]);
+  }, []);
 
   return (
     <>
@@ -37,7 +33,7 @@ function OrdersPage() {
 
         {message && <p className="auth-message">{message}</p>}
 
-        {orders.length === 0 ? (
+        {orders.length === 0 && !message ? (
           <div className="empty-state-card">
             <h3>Bạn chưa có đơn hàng nào</h3>
             <p>Hãy chọn sản phẩm yêu thích và bắt đầu trải nghiệm mua sắm.</p>

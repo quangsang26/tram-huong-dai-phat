@@ -64,11 +64,12 @@ const getProductById = async (id) => {
   return result.rows[0];
 };
 
+// ✅ SỬA LẠI — thêm image_url
 const getAllCategories = async () => {
   const query = `
-    SELECT id, name, description, created_at
+    SELECT id, name, description, image_url, created_at
     FROM categories
-    ORDER BY id DESC
+    ORDER BY id ASC
   `;
   const result = await pool.query(query);
   return result.rows;

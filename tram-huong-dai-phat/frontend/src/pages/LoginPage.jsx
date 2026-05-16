@@ -5,17 +5,11 @@ import Header from "../components/Header";
 
 function LoginPage() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e) => {
@@ -24,10 +18,8 @@ function LoginPage() {
 
     try {
       const res = await api.post("/auth/login", formData);
-
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
-
       setMessage("Đăng nhập thành công");
       setTimeout(() => navigate("/"), 800);
     } catch (error) {
@@ -69,7 +61,18 @@ function LoginPage() {
               placeholder="Nhập mật khẩu"
               value={formData.password}
               onChange={handleChange}
+              style={{ marginTop: 12 }}
             />
+
+            {/* Link quên mật khẩu */}
+            <div style={{ textAlign: "right", marginTop: 8, marginBottom: 4 }}>
+              <Link
+                to="/forgot-password"
+                style={{ fontSize: 14, color: "#c89b3c", textDecoration: "none" }}
+              >
+                Quên mật khẩu?
+              </Link>
+            </div>
 
             <button type="submit" className="gold-btn auth-submit-btn">
               Đăng nhập

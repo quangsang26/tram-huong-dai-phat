@@ -17,13 +17,25 @@ import AdminUserDetailPage from "./pages/AdminUserDetailPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
+import SuperAdminRoute from "./components/SuperAdminRoute";
 import PaymentResultPage from "./pages/PaymentResultPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import AdminBannersPage from "./pages/AdminBannersPage";
+
+
+// Super Admin pages
+import SuperAdminAdminsPage from "./pages/SuperAdminAdminsPage";
+import SuperAdminLogsPage from "./pages/SuperAdminLogsPage";
+import SuperAdminStockPage from "./pages/SuperAdminStockPage";
+
 import "./App.css";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* ── Public ─────────────────────────────────────────── */}
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductListPage />} />
         <Route path="/products/:id" element={<ProductDetailPage />} />
@@ -31,104 +43,36 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/cart" element={<CartPage />} />
 
-        <Route
-          path="/checkout"
-          element={
-            <ProtectedRoute>
-              <CheckoutPage />
-            </ProtectedRoute>
-          }
-        />
+        {/* ── Customer (phải đăng nhập) ───────────────────────── */}
+        <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
+        <Route path="/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
+        <Route path="/orders/:id" element={<ProtectedRoute><OrderDetailPage /></ProtectedRoute>} />
+        <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
+        <Route path="/payment-result" element={<ProtectedRoute><PaymentResultPage /></ProtectedRoute>} />
 
-        <Route
-          path="/orders"
-          element={
-            <ProtectedRoute>
-              <OrdersPage />
-            </ProtectedRoute>
-          }
-        />
+        {/* ── Admin (admin + super_admin) ─────────────────────── */}
+        <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
+        <Route path="/admin/products" element={<AdminRoute><AdminProductsPage /></AdminRoute>} />
+        <Route path="/admin/orders" element={<AdminRoute><AdminOrdersPage /></AdminRoute>} />
+        <Route path="/admin/categories" element={<AdminRoute><AdminCategoriesPage /></AdminRoute>} />
+        <Route path="/admin/users" element={<AdminRoute><AdminUsersPage /></AdminRoute>} />
+        <Route path="/admin/users/:id" element={<AdminRoute><AdminUserDetailPage /></AdminRoute>} />
+        <Route path="/admin/banners" element={<AdminRoute><AdminBannersPage /></AdminRoute>} />
 
+        {/* ── Super Admin (chỉ super_admin) ──────────────────── */}
         <Route
-          path="/orders/:id"
-          element={
-            <ProtectedRoute>
-              <OrderDetailPage />
-            </ProtectedRoute>
-          }
+          path="/super-admin/admins"
+          element={<SuperAdminRoute><SuperAdminAdminsPage /></SuperAdminRoute>}
         />
-
         <Route
-          path="/account"
-          element={
-            <ProtectedRoute>
-              <AccountPage />
-            </ProtectedRoute>
-          }
+          path="/super-admin/logs"
+          element={<SuperAdminRoute><SuperAdminLogsPage /></SuperAdminRoute>}
         />
-
         <Route
-          path="/admin/dashboard"
-          element={
-            <AdminRoute>
-              <AdminDashboardPage />
-            </AdminRoute>
-          }
+          path="/super-admin/stock"
+          element={<SuperAdminRoute><SuperAdminStockPage /></SuperAdminRoute>}
         />
-
-        <Route
-          path="/admin/products"
-          element={
-            <AdminRoute>
-              <AdminProductsPage />
-            </AdminRoute>
-          }
-        />
-
-        <Route
-          path="/admin/orders"
-          element={
-            <AdminRoute>
-              <AdminOrdersPage />
-            </AdminRoute>
-          }
-        />
-
-        <Route
-          path="/admin/categories"
-          element={
-            <AdminRoute>
-              <AdminCategoriesPage />
-            </AdminRoute>
-          }
-        />
-
-        <Route
-          path="/admin/users"
-          element={
-            <AdminRoute>
-              <AdminUsersPage />
-            </AdminRoute>
-          }
-        />
-
-        <Route
-          path="/admin/users/:id"
-          element={
-            <AdminRoute>
-              <AdminUserDetailPage />
-            </AdminRoute>
-          }
-        />
-
-        <Route
-  path="/payment-result"
-  element={
-    <ProtectedRoute>
-      <PaymentResultPage />
-    </ProtectedRoute>
-  }
-/>
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       </Routes>
     </BrowserRouter>
   );
