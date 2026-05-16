@@ -3,7 +3,7 @@
 > Website thương mại điện tử fullstack dành cho cửa hàng trầm hương, xây dựng với React + Node.js + PostgreSQL.  
 > Hệ thống phân quyền 3 cấp: Khách hàng / Admin / Super Admin.
 
-🎬 **[Xem Demo Video](https://youtube.com/your-link-here)** &nbsp;|&nbsp; 📂 **[GitHub Repo](https://github.com/quangsang26/tram-huong-dai-phat)**
+🎬 **[Xem Demo Video]([https://youtube.com/your-link-here](https://youtu.be/eULBI28yoq0?si=wkYsyr0SXCZ4TKbJ))** &nbsp;|&nbsp; 📂 **[GitHub Repo](https://github.com/quangsang26/tram-huong-dai-phat)**
 
 ---
 
