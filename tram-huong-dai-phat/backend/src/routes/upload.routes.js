@@ -16,7 +16,7 @@ router.post(
         });
       }
 
-      const imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+      const imageUrl = `${process.env.BACKEND_PUBLIC_URL}/uploads/${req.file.filename}`;
 
       res.status(200).json({
         message: "Upload ảnh thành công",

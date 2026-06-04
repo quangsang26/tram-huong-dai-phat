@@ -1,3 +1,4 @@
+
 const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, "../../.env") });
 
@@ -9,6 +10,12 @@ const dbConfig = {
   database: process.env.DB_NAME || "tram_huong_dai_phat",
   password: process.env.DB_PASSWORD || "123456",
   port: Number(process.env.DB_PORT) || 5432,
+
+  ssl:
+    process.env.DB_HOST &&
+    process.env.DB_HOST.includes("neon.tech")
+      ? { rejectUnauthorized: false }
+      : false,
 };
 
 const pool = new Pool(dbConfig);
