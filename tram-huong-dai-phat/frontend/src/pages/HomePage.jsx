@@ -189,7 +189,7 @@ function HomePage() {
                   rồi copy vào thư mục backend/uploads/ là hiện lên */}
               <div className="about-image-box">
                 <img
-                  src="http://localhost:5000/uploads/about-image.jpg"
+                  src="https://tram-huong-dai-phat.onrender.com/uploads/about-image.jpg"
                   alt="Vườn Trầm Hương Đại Phát"
                   onError={(e) => {
                     e.target.style.display = "none";
