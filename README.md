@@ -1,9 +1,52 @@
-# 🌿 Trầm Hương Đại Phát — E-Commerce Website
+Trầm Hương Đại Phát — Full-Stack E-Commerce System
 
-> Website thương mại điện tử fullstack dành cho cửa hàng trầm hương, xây dựng với React + Node.js + PostgreSQL.  
-> Hệ thống phân quyền 3 cấp: Khách hàng / Admin / Super Admin.
+A full-stack e-commerce platform for agarwood products, built with React.js, Node.js, Express.js and PostgreSQL.
 
-🎬 **[Xem Demo Video](https://youtu.be/eULBI28yoq0?si=wkYsyr0SXCZ4TKbJ)** &nbsp;|&nbsp; 📂 **[GitHub Repo](https://github.com/quangsang26/tram-huong-dai-phat)**
+🔗 Live Demo
+
+🌐 Customer Website:
+https://tram-huong-dai-phat.vercel.app
+
+🎬 Demo Video:
+https://youtu.be/eULBI28yoq0?si=wkYsyr0SXCZ4TKbJ
+
+📂 GitHub Repository:
+https://github.com/quangsang26/tram-huong-dai-phat
+
+🏗️ Production Deployment
+Layer	Platform
+Frontend	Vercel
+Backend	Render
+Database	Neon PostgreSQL
+🚀 Key Features
+JWT Authentication & Role-Based Authorization
+Customer / Admin / Super Admin Workflows
+Product Management
+Order Management
+Inventory Tracking
+OTP Email Verification
+MoMo Payment Integration
+Audit Logging
+RESTful API Architecture
+Real-Time Stock Updates
+
+📸 Admin Dashboard
+
+
+Dashboard Overview
+<img width="1900" height="870" alt="image" src="https://github.com/user-attachments/assets/547d1139-d643-4911-b2c0-5ba3cc81f26b" />
+
+Product Management
+<img width="1897" height="870" alt="image" src="https://github.com/user-attachments/assets/23a2cab0-7e31-4f4d-ab2f-173c276a82b4" />
+
+Order Management
+<img width="1901" height="867" alt="image" src="https://github.com/user-attachments/assets/05c18fa1-1ef4-4a16-a1ac-ae33bdd9df0e" />
+
+User Management 
+<img width="1897" height="861" alt="image" src="https://github.com/user-attachments/assets/cc1503cb-236e-4bf3-b563-b08e7d5f279d" />
+
+Operation history
+<img width="1898" height="867" alt="image" src="https://github.com/user-attachments/assets/18ad7e37-3838-458e-84ec-6ef855d9b8e8" />
 
 ---
 
